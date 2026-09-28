@@ -61,6 +61,21 @@ void describe('StockService', () => {
     assert.equal(await getStock(dataSource, variant.id), 7);
   });
 
+  void it('returns the current stock for an existing SKU', async () => {
+    assert.deepEqual(await stockService.getStockBySku(variant.sku), {
+      sku: variant.sku,
+      stock: 10,
+    });
+  });
+
+  void it('returns 404 when reading stock for an unknown SKU', async () => {
+    await assert.rejects(
+      stockService.getStockBySku('UNKNOWN-SKU'),
+      (error: unknown) =>
+        error instanceof NotFoundException && error.getStatus() === 404,
+    );
+  });
+
   void it('returns 404 for an unknown SKU', async () => {
     await assert.rejects(
       stockService.createMovement(

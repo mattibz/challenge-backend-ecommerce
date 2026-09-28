@@ -10,7 +10,7 @@
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main",
     "build": "nest build",
-    "test": "node -r ts-node/register --test src/stock/services/stock.service.spec.ts",
+    "test": "node -r ts-node/register --test src/stock/services/stock.service.spec.ts src/stock/controllers/stock.controller.e2e-spec.ts",
     "lint": "eslint \"{src,test}/**/*.ts\"",
     "typecheck": "tsc --noEmit",
     "migration:generate": "typeorm-ts-node-commonjs migration:generate -d src/data-source.ts",
@@ -35,11 +35,14 @@
   "devDependencies": {
     "@eslint/js": "^9.28.0",
     "@nestjs/cli": "^11.0.0",
+    "@nestjs/testing": "^11.2.6",
     "@types/express": "^5.0.0",
     "@types/node": "^22.0.0",
+    "@types/supertest": "^7.2.1",
     "eslint": "^9.28.0",
     "eslint-config-prettier": "^10.0.0",
     "prettier": "^3.5.0",
+    "supertest": "^7.3.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.0",
     "typescript-eslint": "^8.32.0"
