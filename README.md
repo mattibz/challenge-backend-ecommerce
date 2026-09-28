@@ -37,9 +37,9 @@ database.sqlite esta en el .gitignore se genera uno cuando se levanta la app.
 
 ---
 
-### evidencia 
+## evidencia 
 
-## Health
+### Health
 
 ```bash
 curl --location 'http://localhost:3000/health'
@@ -51,7 +51,7 @@ response
     "status": "ok"
 }
 ```
-## GET /stock/:sku
+### GET /stock/:sku
 
 ```bash
 curl --location 'http://localhost:3000/stock/NIKE-42-RED'
@@ -64,7 +64,7 @@ curl --location 'http://localhost:3000/stock/NIKE-42-RED'
 }
 ```
 
-## GET /stock/:sku - check invalid sku
+### GET /stock/:sku - check invalid sku
 
 ```bash
 curl --location 'http://localhost:3000/stock/NIKE-42-BLUE'
@@ -80,7 +80,7 @@ curl --location 'http://localhost:3000/stock/NIKE-42-BLUE'
 
 ---
 
-## POST /stock/movimientos - Compra suma 2 unidades
+### POST /stock/movimientos - Compra suma 2 unidades
 
 ```bash
 curl --location 'http://localhost:3000/stock/movimientos' --header 'Content-Type: application/json' --data '{"sku":"NIKE-42-RED","quantity":2,"reason":"purchase"}'
@@ -99,7 +99,7 @@ curl --location 'http://localhost:3000/stock/movimientos' --header 'Content-Type
     "createdAt": "2026-09-28T15:05:18.000Z"
 }
 ```
-## POST /stock/movimientos - Devolución suma 1 unidad
+### POST /stock/movimientos - Devolución suma 1 unidad
 
 ```bash
 curl --location 'http://localhost:3000/stock/movimientos' --header 'Content-Type: application/json' --data '{"sku":"NIKE-42-RED","quantity":1,"reason":"return"}'
@@ -117,7 +117,7 @@ curl --location 'http://localhost:3000/stock/movimientos' --header 'Content-Type
     "createdAt": "2026-09-28T15:10:11.000Z"
 }
 ```
-## POST /stock/movimientos - Venta descuenta 2 unidades
+### POST /stock/movimientos - Venta descuenta 2 unidades
 
 ```bash
 curl --location 'http://localhost:3000/stock/movimientos' --header 'Content-Type: application/json' --data '{"sku":"NIKE-42-RED","quantity":2,"reason":"sale"}'
@@ -137,7 +137,7 @@ curl --location 'http://localhost:3000/stock/movimientos' --header 'Content-Type
 }
 ```
 
-## POST /stock/movimientos - Ajuste manual de entrada - suma 3 unidades
+### POST /stock/movimientos - Ajuste manual de entrada - suma 3 unidades
 
 ```bash
 curl --location 'http://localhost:3000/stock/movimientos' --header 'Content-Type: application/json' --data '{"sku":"NIKE-42-RED","quantity":3,"reason":"manual_adjustment","direction":"in"}'
@@ -156,7 +156,7 @@ curl --location 'http://localhost:3000/stock/movimientos' --header 'Content-Type
 }
 ```
 
-## POST /stock/movimientos - Ajuste manual de salida - resta una unidad
+### POST /stock/movimientos - Ajuste manual de salida - resta una unidad
 
 ```bash
 curl --location 'http://localhost:3000/stock/movimientos' --header 'Content-Type: application/json' --data '{"sku":"NIKE-42-RED","quantity":1,"reason":"manual_adjustment","direction":"out"}'
@@ -176,7 +176,7 @@ curl --location 'http://localhost:3000/stock/movimientos' --header 'Content-Type
 ```
 
 
-## POST /stock/movimientos - Check quantity validation
+### POST /stock/movimientos - Check quantity validation
 
 ```bash
 curl --location 'http://localhost:3000/stock/movimientos' --header 'Content-Type: application/json' --data '{"sku":"NIKE-42-RED","quantity":0,"reason":"purchase"}'
@@ -191,7 +191,7 @@ curl --location 'http://localhost:3000/stock/movimientos' --header 'Content-Type
 }
 ```
 
-## POST /stock/movimientos - Check stock validation
+### POST /stock/movimientos - Check stock validation
 
 ```bash
 curl --location 'http://localhost:3000/stock/movimientos' --header 'Content-Type: application/json' --data '{"sku":"NIKE-42-RED","quantity":9999,"reason":"sale"}'
@@ -205,7 +205,7 @@ curl --location 'http://localhost:3000/stock/movimientos' --header 'Content-Type
 }
 ```
 
-## POST /stock/movimientos - invalid sku validation
+### POST /stock/movimientos - invalid sku validation
 
 ```bash
 curl --location 'http://localhost:3000/stock/movimientos' --header 'Content-Type: application/json' --data '{"sku":"SKU-INEXISTENTE","quantity":1,"reason":"purchase"}'
@@ -217,4 +217,67 @@ curl --location 'http://localhost:3000/stock/movimientos' --header 'Content-Type
     "error": "Not Found",
     "statusCode": 404
 }
+```
+
+## EP extra
+
+### GET - /catalog/categories - consulta de categorias
+
+```bash
+curl --location 'http://localhost:3000/catalog/categories'
+```
+
+```bash
+[
+    {
+        "id": 1,
+        "name": "Zapatillas"
+    }
+]
+```
+
+### GET -  /catalog/products - consulta todos los productos con su categoría.
+
+```bash
+curl --location 'http://localhost:3000/catalog/products'
+```
+
+```bash
+[
+    {
+        "id": 1,
+        "name": "Nike Air Max",
+        "description": "Zapatilla deportiva",
+        "price": 150000,
+        "category": {
+            "id": 1,
+            "name": "Zapatillas"
+        }
+    }
+]
+```
+
+### GET -  /catalog/products/:productId/variants - consulta las variantes del producto ordenadas por SKU. Si el producto no existe, responde 404. si existe pero no tiene variantes, devuelve [].
+
+```bash
+curl --location 'http://localhost:3000/catalog/products/1/variants'
+```
+```bash
+[
+    {
+        "id": 3,
+        "sku": "NIKE-42-BLACK",
+        "stock": 6
+    },
+    {
+        "id": 1,
+        "sku": "NIKE-42-RED",
+        "stock": 13
+    },
+    {
+        "id": 2,
+        "sku": "NIKE-43-RED",
+        "stock": 8
+    }
+]
 ```
