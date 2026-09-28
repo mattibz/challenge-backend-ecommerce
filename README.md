@@ -236,25 +236,31 @@ curl --location 'http://localhost:3000/catalog/categories'
 ]
 ```
 
-### GET -  /catalog/products - consulta todos los productos con su categoría.
+### GET -  /catalog/products - consulta todos los productos con su categoría y pagiacion 
 
 ```bash
-curl --location 'http://localhost:3000/catalog/products'
+curl --location 'http://localhost:3000/catalog/products?page=1&limit=10'
 ```
 
 ```bash
-[
-    {
-        "id": 1,
-        "name": "Nike Air Max",
-        "description": "Zapatilla deportiva",
-        "price": 150000,
-        "category": {
+{
+    "items": [
+        {
             "id": 1,
-            "name": "Zapatillas"
+            "name": "Nike Air Max",
+            "description": "Zapatilla deportiva",
+            "price": 150000,
+            "category": {
+                "id": 1,
+                "name": "Zapatillas"
+            }
         }
-    }
-]
+    ],
+    "page": 1,
+    "limit": 10,
+    "total": 1,
+    "totalPages": 1
+}
 ```
 
 ### GET -  /catalog/products/:productId/variants - consulta las variantes del producto ordenadas por SKU. Si el producto no existe, responde 404. si existe pero no tiene variantes, devuelve [].

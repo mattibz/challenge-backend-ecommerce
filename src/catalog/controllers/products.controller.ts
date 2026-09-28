@@ -3,9 +3,11 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
-import { Product } from '../entities/product.orm-entity';
 import { Variant } from '../entities/variant.orm-entity';
+import type { PaginatedProductsResponseDto } from '../dto/paginated-products-response.dto';
+import { PaginationQueryDto } from '../dto/pagination-query.dto';
 import { ProductsService } from '../services/products.service';
 
 @Controller('catalog/products')
@@ -13,8 +15,10 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Get()
-  findAll(): Promise<Product[]> {
-    return this.productsService.findAll();
+  findAll(
+    @Query() pagination: PaginationQueryDto,
+  ): Promise<PaginatedProductsResponseDto> {
+    return this.productsService.findAll(pagination);
   }
 
   @Get(':productId/variants')

@@ -1,6 +1,6 @@
 import * as assert from 'node:assert/strict';
 import { afterEach, beforeEach, describe, it } from 'node:test';
-import type { INestApplication } from '@nestjs/common';
+import { ValidationPipe, type INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as request from 'supertest';
@@ -29,6 +29,13 @@ void describe('ProductsController (e2e)', () => {
     }).compile();
 
     app = testingModule.createNestApplication();
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
+      }),
+    );
     await app.init();
 
     const dataSource = app.get(DataSource);
@@ -42,6 +49,12 @@ void describe('ProductsController (e2e)', () => {
       category,
     });
     productId = product.id;
+    await dataSource.getRepository(Product).save({
+      name: 'Trail Runner',
+      description: 'Second test product',
+      price: '120.00',
+      category,
+    });
 
     await dataSource.getRepository(Variant).save([
       { sku: 'SNEAKER-BLACK-42', stock: 4, product },
@@ -53,14 +66,24 @@ void describe('ProductsController (e2e)', () => {
     await app.close();
   });
 
-  void it('returns products with their category through GET /catalog/products', async () => {
+  void it('returns a paginated product list with categories', async () => {
     const response = await request(app.getHttpServer())
-      .get('/catalog/products')
+      .get('/catalog/products?page=1&limit=1')
       .expect(200);
 
-    assert.equal(response.body.length, 1);
-    assert.equal(response.body[0].name, 'Sneaker');
-    assert.equal(response.body[0].category.name, 'Footwear');
+    assert.equal(response.body.items.length, 1);
+    assert.equal(response.body.items[0].name, 'Sneaker');
+    assert.equal(response.body.items[0].category.name, 'Footwear');
+    assert.equal(response.body.page, 1);
+    assert.equal(response.body.limit, 1);
+    assert.equal(response.body.total, 2);
+    assert.equal(response.body.totalPages, 2);
+  });
+
+  void it('rejects invalid pagination parameters', async () => {
+    await request(app.getHttpServer())
+      .get('/catalog/products?page=0')
+      .expect(400);
   });
 
   void it('returns variants for a product', async () => {

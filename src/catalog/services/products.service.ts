@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { PaginatedProductsResponseDto } from '../dto/paginated-products-response.dto';
+import { PaginationQueryDto } from '../dto/pagination-query.dto';
 import { Product } from '../entities/product.orm-entity';
 import { Variant } from '../entities/variant.orm-entity';
 
@@ -13,11 +15,24 @@ export class ProductsService {
     private readonly variantRepository: Repository<Variant>,
   ) {}
 
-  findAll(): Promise<Product[]> {
-    return this.productRepository.find({
+  async findAll(
+    pagination: PaginationQueryDto,
+  ): Promise<PaginatedProductsResponseDto> {
+    const { page, limit } = pagination;
+    const [items, total] = await this.productRepository.findAndCount({
       relations: { category: true },
       order: { name: 'ASC' },
+      skip: (page - 1) * limit,
+      take: limit,
     });
+
+    return {
+      items,
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   async findVariantsByProductId(productId: number): Promise<Variant[]> {
