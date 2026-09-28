@@ -117,7 +117,7 @@ npm run migration:run
 
 ---
 
-## changes
+## changelog
 
 * Se crearon las entidades ORM de categorias, productos, variantes y movimientos de stock, junto con las relaciones entre ellas. Una categoria puede tener varios productos, un producto puede tener varias variantes y una variante puede tener varios movimientos de stock. Cada variante tiene un `sku` único y mantiene su stock actual para poder consultarlo directamente, mientras que `StockMovement` guarda el historial de los cambios realizados sobre ese stock, incluyendo la cantidad, el motivo y la fecha.
 
@@ -129,3 +129,21 @@ npm run migration:run
 * Se implemento el servicio para manejar los movimientos de stock. El servicio busca la variante por su SKU, calcula si el movimiento suma o resta stock, actualiza la cantidad disponible y guarda el movimiento en el historial. La actualizacion del stock y el registro del movimiento se hacen dentro de una misma transacción para evitar inconsistencias entre el stock y su historial. Si algo falla, se hace un rollback y se deshacen los cambios realizados. Ademas, se evita que el stock quede negativo y, si no hay suficiente stock, la operacion devuelve un `409 Conflict` sin modificar el stock ni crear un movimiento. Se agregaron 7 tests: se verifica que una entrada de stock aumente el saldo, que una venta lo disminuya, que un SKU inexistente devuelva `404`, que una cantidad `0` sea rechazada con `400`, que un movimiento válido cree un registro en `StockMovement`, que una salida mayor al stock disponible devuelva `409` y mantenga el stock sin cambios, y que una salida rechazada no cree un movimiento en el historial. se cubre race conditions y no justifica para este caso hacer un strategy en el switch del service.
 
 * Se agrego controller con metodos post de movimientos y get para consultar el current stock por id de sku y se implementaron tests e2e para levantar StockModule con SQLite en memoria y envía requests HTTP con Supertest y el ValidationPipe global: comprueba que crear un movimiento válido devuelve 201, consultar stock devuelve el SKU y el saldo, un body inválido devuelve 400, un SKU inexistente devuelve 404 y una venta sin stock responde 409 sin cambiar el saldo
+
+## Seed de datos
+
+```bash
+npm run start:dev
+```
+arranca el proyecto y genera via synchronize toda la db
+
+aghregamos comando
+
+```bash
+npm run seed
+```
+genera data en la base deberias ver algo como Seed complete: 3 variants created, 0 already existed
+
+
+No usamos migrations en el flujo de desarrollo: al iniciar la aplicacion con `synchronize: true`, TypeORM genera las tablas a partir de las entidades. El seed reutiliza `AppDataSource` y solo carga datos. no modifica el esquema. En una base nueva se inicia la aplicacion una vez para que se creen las tablas antes de ejecutar `npm run seed`. El seed agrega una categoría, un producto y tres variantes, cada una con su movimiento inicial de compra. Es idempotente por SKU, no duplica ni reinicia variantes existentes. Esta bloqueado cuando `NODE_ENV=production`.
+database.sqlite esta en el .gitignore se genera uno cuando se levanta la app.

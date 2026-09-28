@@ -11,6 +11,7 @@
     "start:prod": "node dist/main",
     "build": "nest build",
     "test": "node -r ts-node/register --test src/stock/services/stock.service.spec.ts src/stock/controllers/stock.controller.e2e-spec.ts",
+    "seed": "ts-node src/database/seed.ts",
     "lint": "eslint \"{src,test}/**/*.ts\"",
     "typecheck": "tsc --noEmit",
     "migration:generate": "typeorm-ts-node-commonjs migration:generate -d src/data-source.ts",
