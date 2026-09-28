@@ -287,3 +287,55 @@ curl --location 'http://localhost:3000/catalog/products/1/variants'
     }
 ]
 ```
+
+### GET - /stock/products/:productId/movements - lista el hisorico de movimientos por un sku
+
+```bash
+curl --location 'http://localhost:3000/stock/variants/NIKE-42-RED/movements'
+```
+```bash
+[
+    {
+        "id": 8,
+        "sku": "NIKE-42-RED",
+        "quantity": -1,
+        "reason": "manual_adjustment",
+        "createdAt": "2026-09-28T15:17:50.000Z"
+    },
+    {
+        "id": 7,
+        "sku": "NIKE-42-RED",
+        "quantity": 3,
+        "reason": "manual_adjustment",
+        "createdAt": "2026-09-28T15:16:38.000Z"
+    },
+    {
+        "id": 6,
+        "sku": "NIKE-42-RED",
+        "quantity": -2,
+        "reason": "sale",
+        "createdAt": "2026-09-28T15:15:00.000Z"
+    },
+    {
+        "id": 5,
+        "sku": "NIKE-42-RED",
+        "quantity": 1,
+        "reason": "return",
+        "createdAt": "2026-09-28T15:10:11.000Z"
+    },
+    {
+        "id": 4,
+        "sku": "NIKE-42-RED",
+        "quantity": 2,
+        "reason": "purchase",
+        "createdAt": "2026-09-28T15:05:18.000Z"
+    },
+    {
+        "id": 1,
+        "sku": "NIKE-42-RED",
+        "quantity": 10,
+        "reason": "purchase",
+        "createdAt": "2026-09-28T14:46:53.000Z"
+    }
+]
+```

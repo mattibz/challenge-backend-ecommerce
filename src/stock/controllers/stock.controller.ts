@@ -1,6 +1,13 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { CreateStockMovementDto } from '../dto/create-stock-movement.dto';
 import type { StockLevelResponseDto } from '../dto/stock-level-response.dto';
+import type { VariantStockMovementResponseDto } from '../dto/variant-stock-movement-response.dto';
 import { StockMovement } from '../entities/stock-movement.orm-entity';
 import { StockService } from '../services/stock.service';
 
@@ -11,6 +18,13 @@ export class StockController {
   @Post('movimientos')
   create(@Body() dto: CreateStockMovementDto): Promise<StockMovement> {
     return this.stockService.createMovement(dto);
+  }
+
+  @Get('variants/:sku/movements')
+  getVariantMovements(
+    @Param('sku') sku: string,
+  ): Promise<VariantStockMovementResponseDto[]> {
+    return this.stockService.getVariantMovementsBySku(sku);
   }
 
   @Get(':sku')

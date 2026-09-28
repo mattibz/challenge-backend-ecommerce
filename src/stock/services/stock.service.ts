@@ -5,6 +5,7 @@ import { DataSource } from 'typeorm';
 import { Variant } from '../../catalog/entities/variant.orm-entity';
 import { CreateStockMovementDto } from '../dto/create-stock-movement.dto';
 import type { StockLevelResponseDto } from '../dto/stock-level-response.dto';
+import type { VariantStockMovementResponseDto } from '../dto/variant-stock-movement-response.dto';
 import { StockMovement } from '../entities/stock-movement.orm-entity';
 import { StockMovementReason } from '../enums/movement-reason.enum';
 
@@ -60,6 +61,32 @@ export class StockService {
     }
 
     return { sku: variant.sku, stock: variant.stock };
+  }
+
+  async getVariantMovementsBySku(
+    sku: string,
+  ): Promise<VariantStockMovementResponseDto[]> {
+    const variant = await this.dataSource
+      .getRepository(Variant)
+      .findOneBy({ sku });
+
+    if (variant === null) {
+      throw new NotFoundException(`Variant with SKU ${sku} was not found`);
+    }
+
+    const movements = await this.dataSource.getRepository(StockMovement).find({
+      where: { variant: { id: variant.id } },
+      relations: { variant: true },
+      order: { createdAt: 'DESC', id: 'DESC' },
+    });
+
+    return movements.map((movement) => ({
+      id: movement.id,
+      sku: movement.variant.sku,
+      quantity: movement.quantity,
+      reason: movement.reason,
+      createdAt: movement.createdAt,
+    }));
   }
 
   private calculateDelta(dto: CreateStockMovementDto): number {

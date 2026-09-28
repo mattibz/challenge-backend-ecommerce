@@ -57,6 +57,11 @@ void describe('StockController (e2e)', () => {
       stock: 5,
       product,
     });
+    await dataSource.getRepository(Variant).save({
+      sku: 'ZAP-001-43',
+      stock: 4,
+      product,
+    });
   });
 
   void afterEach(async () => {
@@ -103,5 +108,45 @@ void describe('StockController (e2e)', () => {
       .getRepository(Variant)
       .findOneByOrFail({ sku });
     assert.equal(variant.stock, 5);
+  });
+
+  void it('returns movement history for the requested variant only', async () => {
+    await request(app.getHttpServer())
+      .post('/stock/movimientos')
+      .send({ sku, quantity: 2, reason: 'purchase' })
+      .expect(201);
+    await request(app.getHttpServer())
+      .post('/stock/movimientos')
+      .send({ sku: 'ZAP-001-43', quantity: 3, reason: 'return' })
+      .expect(201);
+
+    const response = await request(app.getHttpServer())
+      .get(`/stock/variants/${sku}/movements`)
+      .expect(200);
+
+    assert.deepEqual(
+      response.body.map(
+        (movement: { sku: string; quantity: number; reason: string }) => ({
+          sku: movement.sku,
+          quantity: movement.quantity,
+          reason: movement.reason,
+        }),
+      ),
+      [{ sku, quantity: 2, reason: 'purchase' }],
+    );
+  });
+
+  void it('returns an empty history for a variant without movements', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/stock/variants/ZAP-001-43/movements')
+      .expect(200);
+
+    assert.deepEqual(response.body, []);
+  });
+
+  void it('returns 404 for movement history of an unknown SKU', async () => {
+    await request(app.getHttpServer())
+      .get('/stock/variants/UNKNOWN-SKU/movements')
+      .expect(404);
   });
 });
