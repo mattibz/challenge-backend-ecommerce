@@ -24,12 +24,16 @@ npm run start:dev
 ```
 arranca el proyecto y genera via synchronize toda la db
 
+
+
 aghregamos comando
 
 ```bash
 npm run seed
 ```
 genera data en la base deberias ver algo como Seed complete: 3 variants created, 0 already existed
+<img width="400" height="400" alt="Captura" src="https://github.com/user-attachments/assets/132bb87d-8ff2-471c-8104-2caebaecd485" />
+<img width="500" height="200" alt="seed" src="https://github.com/user-attachments/assets/7d25b819-98f9-4840-9d9a-46aae813ef2f" />
 
 
 No usamos migrations en el flujo de desarrollo: al iniciar la aplicacion con `synchronize: true`, TypeORM genera las tablas a partir de las entidades. El seed reutiliza `AppDataSource` y solo carga datos. no modifica el esquema. En una base nueva se inicia la aplicacion una vez para que se creen las tablas antes de ejecutar `npm run seed`. El seed agrega una categoría, un producto y tres variantes, cada una con su movimiento inicial de compra. Es idempotente por SKU, no duplica ni reinicia variantes existentes. Esta bloqueado cuando `NODE_ENV=production`.
