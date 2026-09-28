@@ -2,7 +2,7 @@
 
 ---
 
-## changelog
+## changelog :clipboard:
 
 * Se crearon las entidades ORM de categorias, productos, variantes y movimientos de stock, junto con las relaciones entre ellas. Una categoria puede tener varios productos, un producto puede tener varias variantes y una variante puede tener varios movimientos de stock. Cada variante tiene un `sku` único y mantiene su stock actual para poder consultarlo directamente, mientras que `StockMovement` guarda el historial de los cambios realizados sobre ese stock, incluyendo la cantidad, el motivo y la fecha.
 
@@ -17,7 +17,7 @@
 
 ---
 
-## Seed de datos
+## Seed de datos :ear_of_rice: 
 
 ```bash
 npm run start:dev
@@ -43,7 +43,7 @@ database.sqlite esta en el .gitignore se genera uno cuando se levanta la app.
 
 ## evidencia 
 
-### Health
+#### `GET /health` :small_blue_diamond: 
 
 ```bash
 curl --location 'http://localhost:3000/health'
@@ -55,7 +55,7 @@ response
     "status": "ok"
 }
 ```
-### GET /stock/:sku
+#### `GET /stock/:sku`  :small_blue_diamond: 
 
 ```bash
 curl --location 'http://localhost:3000/stock/NIKE-42-RED'
@@ -68,7 +68,7 @@ curl --location 'http://localhost:3000/stock/NIKE-42-RED'
 }
 ```
 
-### GET /stock/:sku - check invalid sku
+#### `GET /stock/:sku - check invalid sku` :small_blue_diamond: 
 
 ```bash
 curl --location 'http://localhost:3000/stock/NIKE-42-BLUE'
@@ -83,8 +83,7 @@ curl --location 'http://localhost:3000/stock/NIKE-42-BLUE'
 ```
 
 ---
-
-### POST /stock/movimientos - Compra suma 2 unidades
+#### `POST /stock/movimientos - Compra suma 2 unidades`  :small_orange_diamond:
 
 ```bash
 curl --location 'http://localhost:3000/stock/movimientos' --header 'Content-Type: application/json' --data '{"sku":"NIKE-42-RED","quantity":2,"reason":"purchase"}'
@@ -103,7 +102,7 @@ curl --location 'http://localhost:3000/stock/movimientos' --header 'Content-Type
     "createdAt": "2026-09-28T15:05:18.000Z"
 }
 ```
-### POST /stock/movimientos - Devolución suma 1 unidad
+#### `POST /stock/movimientos - Devolución suma 1 unidad`  :small_orange_diamond:
 
 ```bash
 curl --location 'http://localhost:3000/stock/movimientos' --header 'Content-Type: application/json' --data '{"sku":"NIKE-42-RED","quantity":1,"reason":"return"}'
@@ -121,7 +120,7 @@ curl --location 'http://localhost:3000/stock/movimientos' --header 'Content-Type
     "createdAt": "2026-09-28T15:10:11.000Z"
 }
 ```
-### POST /stock/movimientos - Venta descuenta 2 unidades
+#### `POST /stock/movimientos - Venta descuenta 2 unidades`  :small_orange_diamond:
 
 ```bash
 curl --location 'http://localhost:3000/stock/movimientos' --header 'Content-Type: application/json' --data '{"sku":"NIKE-42-RED","quantity":2,"reason":"sale"}'
@@ -140,8 +139,7 @@ curl --location 'http://localhost:3000/stock/movimientos' --header 'Content-Type
     "createdAt": "2026-09-28T15:15:00.000Z"
 }
 ```
-
-### POST /stock/movimientos - Ajuste manual de entrada - suma 3 unidades
+#### `POST /stock/movimientos - Ajuste manual de entrada - suma 3 unidades`  :small_orange_diamond:
 
 ```bash
 curl --location 'http://localhost:3000/stock/movimientos' --header 'Content-Type: application/json' --data '{"sku":"NIKE-42-RED","quantity":3,"reason":"manual_adjustment","direction":"in"}'
@@ -159,8 +157,7 @@ curl --location 'http://localhost:3000/stock/movimientos' --header 'Content-Type
     "createdAt": "2026-09-28T15:16:38.000Z"
 }
 ```
-
-### POST /stock/movimientos - Ajuste manual de salida - resta una unidad
+#### `POST /stock/movimientos - Ajuste manual de salida - resta una unidad`  :small_orange_diamond:
 
 ```bash
 curl --location 'http://localhost:3000/stock/movimientos' --header 'Content-Type: application/json' --data '{"sku":"NIKE-42-RED","quantity":1,"reason":"manual_adjustment","direction":"out"}'
@@ -178,9 +175,7 @@ curl --location 'http://localhost:3000/stock/movimientos' --header 'Content-Type
     "createdAt": "2026-09-28T15:17:50.000Z"
 }
 ```
-
-
-### POST /stock/movimientos - Check quantity validation
+#### `POST /stock/movimientos - Check quantity validation`  :small_orange_diamond:
 
 ```bash
 curl --location 'http://localhost:3000/stock/movimientos' --header 'Content-Type: application/json' --data '{"sku":"NIKE-42-RED","quantity":0,"reason":"purchase"}'
@@ -194,8 +189,7 @@ curl --location 'http://localhost:3000/stock/movimientos' --header 'Content-Type
     "statusCode": 400
 }
 ```
-
-### POST /stock/movimientos - Check stock validation
+#### `POST /stock/movimientos - Check stock validation`  :small_orange_diamond:
 
 ```bash
 curl --location 'http://localhost:3000/stock/movimientos' --header 'Content-Type: application/json' --data '{"sku":"NIKE-42-RED","quantity":9999,"reason":"sale"}'
@@ -208,8 +202,7 @@ curl --location 'http://localhost:3000/stock/movimientos' --header 'Content-Type
     "statusCode": 409
 }
 ```
-
-### POST /stock/movimientos - invalid sku validation
+#### `POST /stock/movimientos - invalid sku validation`  :small_orange_diamond:
 
 ```bash
 curl --location 'http://localhost:3000/stock/movimientos' --header 'Content-Type: application/json' --data '{"sku":"SKU-INEXISTENTE","quantity":1,"reason":"purchase"}'
@@ -223,9 +216,9 @@ curl --location 'http://localhost:3000/stock/movimientos' --header 'Content-Type
 }
 ```
 
-## EP extra
+## EPs extra
 
-### GET - /catalog/categories - consulta de categorias
+#### ` GET - /catalog/categories - consulta de categorias`  :shipit:
 
 ```bash
 curl --location 'http://localhost:3000/catalog/categories'
@@ -239,8 +232,7 @@ curl --location 'http://localhost:3000/catalog/categories'
     }
 ]
 ```
-
-### GET -  /catalog/products - consulta todos los productos con su categoría y pagiacion 
+#### `GET -  /catalog/products - consulta todos los productos con su categoría y pagiacion `  :shipit:
 
 ```bash
 curl --location 'http://localhost:3000/catalog/products?page=1&limit=10'
@@ -266,8 +258,7 @@ curl --location 'http://localhost:3000/catalog/products?page=1&limit=10'
     "totalPages": 1
 }
 ```
-
-### GET -  /catalog/products/:productId/variants - consulta las variantes del producto ordenadas por SKU. Si el producto no existe, responde 404. si existe pero no tiene variantes, devuelve [].
+#### `GET -  /catalog/products/:productId/variants - consulta las variantes del producto ordenadas por SKU`  :shipit:
 
 ```bash
 curl --location 'http://localhost:3000/catalog/products/1/variants'
@@ -291,8 +282,7 @@ curl --location 'http://localhost:3000/catalog/products/1/variants'
     }
 ]
 ```
-
-### GET - /stock/products/:productId/movements - lista el hisorico de movimientos por un sku
+#### `GET - /stock/products/:productId/movements - lista el hisorico de movimientos por un sku`  :shipit:
 
 ```bash
 curl --location 'http://localhost:3000/stock/variants/NIKE-42-RED/movements'
