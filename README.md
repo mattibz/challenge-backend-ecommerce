@@ -114,3 +114,12 @@ npm run migration:run
 | `npm run build`      | Compile               |
 | `npm run lint`       | ESLint                |
 | `npm run typecheck`  | Type checking         |
+
+---
+
+## changes
+
+* Se crearon las entidades ORM de categorias, productos, variantes y movimientos de stock, junto con las relaciones entre ellas. Una categoria puede tener varios productos, un producto puede tener varias variantes y una variante puede tener varios movimientos de stock. Cada variante tiene un `sku` único y mantiene su stock actual para poder consultarlo directamente, mientras que `StockMovement` guarda el historial de los cambios realizados sobre ese stock, incluyendo la cantidad, el motivo y la fecha.
+
+
+* Se creo `CreateStockMovementDto` para definir y validar el contrato de entrada del endpoint de movimientos de stock. Valida que `sku` sea obligatorio y no vacio, que `quantity` sea un entero positivo con un minimo de 1 y que `reason` pertenezca al enum `StockMovementReason`. El campo `direction` acepta unicamente `in` o `out`, es obligatorio para `manual_adjustment` y no se permite para el resto de los motivos. Se agrego este flag extra porque un ajuste manual puede incrementar o disminuir el stock. Se decidio no utilizar signos en `quantity`, ya que este campo representa unicamente la cantidad de unidades involucradas en el movimiento, mientras que la direccion del movimiento se expresa mediante `direction` cuando es necesaria.Ademas, podia generar combinaciones inconsistentes con `reason`
